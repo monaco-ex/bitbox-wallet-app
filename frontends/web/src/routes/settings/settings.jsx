@@ -115,6 +115,20 @@ export default class Settings extends Component {
                                                     label={t('settings.accounts.litecoinP2WPKH')}
                                                     className="text-medium" />
                                             </div>
+                                            <div>
+                                                <Checkbox
+                                                    checked={config.backend.monacoinP2WPKHP2SHActive}
+                                                    id="monacoinP2WPKHP2SHActive"
+                                                    onChange={this.handleToggleAccount}
+                                                    label={t('settings.accounts.monacoinP2WPKHP2SH')}
+                                                    className="text-medium" />
+                                                <Checkbox
+                                                    checked={config.backend.monacoinP2WPKHActive}
+                                                    id="monacoinP2WPKHActive"
+                                                    onChange={this.handleToggleAccount}
+                                                    label={t('settings.accounts.monacoinP2WPKH')}
+                                                    className="text-medium" />
+                                            </div>
                                         </div>
                                         <hr />
                                         <div class="subHeaderContainer">

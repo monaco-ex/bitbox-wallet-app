@@ -35,6 +35,7 @@ import (
 	"github.com/digitalbitbox/bitbox-wallet-app/backend/coins/btc/transactions"
 	"github.com/digitalbitbox/bitbox-wallet-app/backend/coins/coin"
 	"github.com/digitalbitbox/bitbox-wallet-app/backend/coins/ltc"
+	"github.com/digitalbitbox/bitbox-wallet-app/backend/coins/mona"
 	"github.com/digitalbitbox/bitbox-wallet-app/backend/db/transactionsdb"
 	"github.com/digitalbitbox/bitbox-wallet-app/backend/keystore"
 	"github.com/digitalbitbox/bitbox-wallet-app/util/errp"
@@ -296,6 +297,10 @@ func (account *Account) xpubVersionForScriptType(scriptType signing.ScriptType) 
 			return versions[signing.ScriptTypeP2PKH]
 		}
 		return version
+        case mona.MainNetParams.Net:
+		return nil //TODO:
+	case mona.TestNet4Params.Net:
+		return nil //TODO:
 	case chaincfg.TestNet3Params.Net:
 		return chaincfg.TestNet3Params.HDPublicKeyID
 	case ltc.TestNet4Params.Net:

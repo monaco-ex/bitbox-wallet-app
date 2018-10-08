@@ -27,6 +27,7 @@ import (
 	"github.com/btcsuite/btcd/wire"
 	"github.com/digitalbitbox/bitbox-wallet-app/backend/coins/btc/blockchain"
 	"github.com/digitalbitbox/bitbox-wallet-app/backend/coins/ltc"
+	"github.com/digitalbitbox/bitbox-wallet-app/backend/coins/mona"
 	"github.com/digitalbitbox/bitbox-wallet-app/util/errp"
 	"github.com/digitalbitbox/bitbox-wallet-app/util/locker"
 	"github.com/sirupsen/logrus"
@@ -240,6 +241,21 @@ func (headers *Headers) powHash(msg []byte) chainhash.Hash {
 			panic(errp.WithStack(err))
 		}
 		return hash
+	case mona.MainNetParams.Net: //TODO:
+		const (
+			N = 1024
+			r = 1
+			p = 1
+		)
+		hashBytes, err := scrypt.Key(msg, msg, N, r, p, 32)
+		if err != nil {
+			panic(errp.WithStack(err))
+		}
+		hash := chainhash.Hash{}
+		if err := hash.SetBytes(hashBytes); err != nil {
+			panic(errp.WithStack(err))
+		}
+		return hash
 	default:
 		panic("unsupported coin")
 	}
@@ -272,7 +288,7 @@ func (headers *Headers) canConnect(dbTx DBTxInterface, tip int, header *wire.Blo
 			headers.log.Infof("checkpoint at %d matches", tip)
 		}
 		// Check Difficulty, PoW.
-		if headers.net.Net == chaincfg.MainNetParams.Net || headers.net.Net == ltc.MainNetParams.Net {
+		if headers.net.Net == chaincfg.MainNetParams.Net || headers.net.Net == ltc.MainNetParams.Net || headers.net.Net == mona.MainNetParams.Net {
 			newTarget, err := headers.getTarget(dbTx, tip)
 			if err != nil {
 				return err

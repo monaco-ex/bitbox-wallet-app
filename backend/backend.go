@@ -34,6 +34,7 @@ import (
 	"github.com/digitalbitbox/bitbox-wallet-app/backend/coins/coin"
 	"github.com/digitalbitbox/bitbox-wallet-app/backend/coins/eth"
 	"github.com/digitalbitbox/bitbox-wallet-app/backend/coins/ltc"
+	"github.com/digitalbitbox/bitbox-wallet-app/backend/coins/mona"
 	"github.com/digitalbitbox/bitbox-wallet-app/backend/config"
 	"github.com/digitalbitbox/bitbox-wallet-app/backend/devices/device"
 	"github.com/digitalbitbox/bitbox-wallet-app/backend/devices/usb"
@@ -52,6 +53,8 @@ const (
 	coinTBTC = "tbtc"
 	coinLTC  = "ltc"
 	coinTLTC = "tltc"
+	coinMONA  = "mona"
+	coinTMONA = "tmona"
 	coinETH  = "eth"
 	coinTETH = "teth"
 )
@@ -184,6 +187,10 @@ func (backend *Backend) defaultProdServers(code string) []*rpc.ServerInfo {
 		return backend.config.Config().Backend.LTC.ElectrumServers
 	case coinTLTC:
 		return backend.config.Config().Backend.TLTC.ElectrumServers
+	case coinMONA:
+		return backend.config.Config().Backend.MONA.ElectrumServers
+	case coinTMONA:
+		return backend.config.Config().Backend.TMONA.ElectrumServers
 	default:
 		panic(errp.Newf("The given code %s is unknown.", code))
 	}
@@ -238,6 +245,10 @@ O3nOxjgSfRAfKWQ2Ny1APKcn6I83P5PFLhtO5I12
 		return []*rpc.ServerInfo{{Server: "dev.shiftcrypto.ch:50004", TLS: true, PEMCert: devShiftCA}}
 	case coinTLTC:
 		return []*rpc.ServerInfo{{Server: "dev.shiftcrypto.ch:51004", TLS: true, PEMCert: devShiftCA}}
+	case coinMONA:
+		return []*rpc.ServerInfo{{Server: "dev.shiftcrypto.ch:50005", TLS: true, PEMCert: devShiftCA}}
+	case coinTMONA:
+		return []*rpc.ServerInfo{{Server: "dev.shiftcrypto.ch:51005", TLS: true, PEMCert: devShiftCA}}
 	default:
 		panic(errp.Newf("The given code %s is unknown.", code))
 	}
@@ -279,6 +290,14 @@ func (backend *Backend) Coin(code string) coin.Coin {
 		servers := backend.defaultElectrumXServers(code)
 		coin = btc.NewCoin(coinLTC, "LTC", &ltc.MainNetParams, dbFolder, servers,
 			"https://insight.litecore.io/tx/", backend.ratesUpdater)
+	case coinTMONA:
+		servers := backend.defaultElectrumXServers(code)
+		coin = btc.NewCoin(coinTMONA, "TMONA", &mona.TestNet4Params, dbFolder, servers,
+			"https://testnet-mona.insight.monaco-ex.org/insight/tx/", backend.ratesUpdater)
+	case coinMONA:
+		servers := backend.defaultElectrumXServers(code)
+		coin = btc.NewCoin(coinMONA, "MONA", &mona.MainNetParams, dbFolder, servers,
+			"https://mona.insight.monaco-ex.org/insight/tx/", backend.ratesUpdater)
 	case coinETH:
 		coin = eth.NewCoin(code, params.MainnetChainConfig, "https://etherscan.io/address/")
 	case coinTETH:
@@ -320,6 +339,12 @@ func (backend *Backend) initAccounts() {
 			backend.addAccount(TLTC, "tltc-p2wpkh", "Litecoin Testnet: bech32", "m/84'/1'/0'",
 				signing.ScriptTypeP2WPKH)
 
+			TMONA := backend.Coin(coinTMONA)
+			backend.addAccount(TMONA, "tmona-p2wpkh-p2sh", "Monacoin Testnet", "m/49'/1'/0'",
+				signing.ScriptTypeP2WPKHP2SH)
+			backend.addAccount(TMONA, "tmona-p2wpkh", "Monacoin Testnet: bech32", "m/84'/1'/0'",
+				signing.ScriptTypeP2WPKH)
+
 			if backend.arguments.DevMode() {
 				teth := backend.Coin(coinTETH)
 				backend.addAccount(teth, "teth", "Ethereum Testnet", "m/44'/1'/0'/0/0", signing.ScriptTypeP2WPKH)
@@ -338,6 +363,12 @@ func (backend *Backend) initAccounts() {
 		backend.addAccount(LTC, "ltc-p2wpkh-p2sh", "Litecoin", "m/49'/2'/0'",
 			signing.ScriptTypeP2WPKHP2SH)
 		backend.addAccount(LTC, "ltc-p2wpkh", "Litecoin: bech32", "m/84'/2'/0'",
+			signing.ScriptTypeP2WPKH)
+
+		MONA := backend.Coin(coinMONA)
+		backend.addAccount(MONA, "mona-p2wpkh-p2sh", "Monacoin", "m/44'/0'/0'",
+			signing.ScriptTypeP2WPKHP2SH)
+		backend.addAccount(MONA, "mona-p2wpkh", "Monacoin: bech32", "m/84'/2'/0'",
 			signing.ScriptTypeP2WPKH)
 
 		if backend.arguments.DevMode() {

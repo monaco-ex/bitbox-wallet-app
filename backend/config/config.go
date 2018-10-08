@@ -36,12 +36,16 @@ type Backend struct {
 	BitcoinP2WPKHActive      bool `json:"bitcoinP2WPKHActive"`
 	LitecoinP2WPKHP2SHActive bool `json:"litecoinP2WPKHP2SHActive"`
 	LitecoinP2WPKHActive     bool `json:"litecoinP2WPKHActive"`
+	MonacoinP2WPKHP2SHActive bool `json:"monacoinP2WPKHP2SHActive"`
+	MonacoinP2WPKHActive     bool `json:"monacoinP2WPKHActive"`
 	EthereumActive           bool `json:"ethereumActive"`
 
 	BTC  CoinConfig `json:"btc"`
 	TBTC CoinConfig `json:"tbtc"`
 	LTC  CoinConfig `json:"ltc"`
 	TLTC CoinConfig `json:"tltc"`
+	MONA  CoinConfig `json:"mona"`
+	TMONA CoinConfig `json:"tmona"`
 }
 
 // AccountActive returns the Active setting for a coin by code.
@@ -57,6 +61,10 @@ func (backend Backend) AccountActive(code string) bool {
 		return backend.LitecoinP2WPKHP2SHActive
 	case "tltc-p2wpkh", "ltc-p2wpkh":
 		return backend.LitecoinP2WPKHActive
+	case "tmona-p2wpkh-p2sh", "mona-p2wpkh-p2sh":
+		return backend.MonacoinP2WPKHP2SHActive
+	case "tmona-p2wpkh", "mona-p2wpkh":
+		return backend.MonacoinP2WPKHActive
 	case "eth", "teth":
 		return backend.EthereumActive
 	default:
@@ -117,6 +125,8 @@ func NewDefaultConfig() AppConfig {
 			BitcoinP2WPKHActive:      false,
 			LitecoinP2WPKHP2SHActive: true,
 			LitecoinP2WPKHActive:     false,
+			MonacoinP2WPKHP2SHActive: true,
+			MonacoinP2WPKHActive:     false,
 			EthereumActive:           true,
 			BTC: CoinConfig{
 				ElectrumServers: []*rpc.ServerInfo{
@@ -169,6 +179,34 @@ func NewDefaultConfig() AppConfig {
 					},
 					{
 						Server:  "ltc.shamir.shiftcrypto.ch:51004",
+						TLS:     true,
+						PEMCert: shiftRootCA,
+					},
+				},
+			},
+			MONA: CoinConfig{
+				ElectrumServers: []*rpc.ServerInfo{
+					{
+						Server:  "mona.shiftcrypto.ch:443",
+						TLS:     true,
+						PEMCert: shiftRootCA,
+					},
+					{
+						Server:  "mona.shamir.shiftcrypto.ch:443",
+						TLS:     true,
+						PEMCert: shiftRootCA,
+					},
+				},
+			},
+			TMONA: CoinConfig{
+				ElectrumServers: []*rpc.ServerInfo{
+					{
+						Server:  "mona.shiftcrypto.ch:51004",
+						TLS:     true,
+						PEMCert: shiftRootCA,
+					},
+					{
+						Server:  "mona.shamir.shiftcrypto.ch:51004",
 						TLS:     true,
 						PEMCert: shiftRootCA,
 					},

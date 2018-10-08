@@ -101,6 +101,18 @@ export default class Receive extends Component {
         }
     }
 
+    monaConvertToLegacy = () => {
+        const { receiveAddresses, activeIndex } = this.state;
+        if (receiveAddresses !== null && activeIndex !== null) {
+            apiPost('account/' + this.props.code + '/convert-to-legacy-address',
+                receiveAddresses[activeIndex].addressID)
+                .then(legacyAddress => {
+                    const address = receiveAddresses[activeIndex].address;
+                    alert('Legacy format of ' + address + ':\n' + legacyAddress); // eslint-disable-line no-alert
+                });
+        }
+    }
+
     render({
         t,
         coinCode,
@@ -114,6 +126,8 @@ export default class Receive extends Component {
         let uriPrefix = 'bitcoin:';
         if (coinCode === 'ltc' || coinCode === 'tltc') {
             uriPrefix = 'litecoin:';
+        } else if (coinCode === 'mona' || coinCode === 'tmona') {
+            uriPrefix = 'monacoin:';
         }
         const content = receiveAddresses ? (
             <div>
@@ -149,6 +163,17 @@ export default class Receive extends Component {
                             onClick={this.ltcConvertToLegacy}
                             className={style.button}>
                             {t('receive.ltcLegacy.button')}
+                        </Button>
+                    </div>
+                ) }
+                { code === 'mona-p2wpkh-p2sh' && (
+                    <div>
+                        <p>{t('receive.monaLegacy.info')}</p>
+                        <Button
+                            primary
+                            onClick={this.monaConvertToLegacy}
+                            className={style.button}>
+                            {t('receive.monaLegacy.button')}
                         </Button>
                     </div>
                 ) }

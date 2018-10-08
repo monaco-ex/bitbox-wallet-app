@@ -20,6 +20,8 @@ import BTC from './assets/bitcoin.svg';
 import BTC_GREY from './assets/bitcoin_disabled.svg';
 import LTC from './assets/litecoin.svg';
 import LTC_GREY from './assets/litecoin_disabled.svg';
+import MONA from './assets/litecoin.svg'; //TODO:
+import MONA_GREY from './assets/litecoin_disabled.svg'; //TODO:
 import BitBoxLogo from './assets/bitbox-logo.svg';
 import BitBoxInvertedLogo from './assets/bitbox-logo-alt.svg';
 import BitBoxSwissLogo from './assets/bitbox-swisscross-logo.svg';
@@ -44,6 +46,10 @@ const logoMap = {
     'ltc-p2wpkh': [LTC, LTC_GREY],
     'tltc-p2wpkh-p2sh': [LTC, LTC_GREY],
     'tltc-p2wpkh': [LTC, LTC_GREY],
+    'mona-p2wpkh-p2sh': [MONA, MONA_GREY],
+    'mona-p2wpkh': [MONA, MONA_GREY],
+    'tmona-p2wpkh-p2sh': [MONA, MONA_GREY],
+    'tmona-p2wpkh': [MONA, MONA_GREY],
     'eth': [LTC, LTC],
     'teth': [LTC, LTC],
 };
